@@ -1,8 +1,6 @@
 import requests
 import json
 import math
-import urllib.request
-from PIL import Image
 
 print("## OMDB ##\n")
 searchRequest = input("Search Omdb: ")
@@ -45,15 +43,6 @@ def showList(Name):
     for j in allShows(Name):
         print(j['Title'])
 
-def showPoster(movieDict):
-    filename, headers = urllib.request.urlretrieve(movieDict)
-    #returns two values; filename of downloaded png, headers aka metadata of the file ~n
-    img = Image.open(filename)
-    img.show()
-    #i had to manually delete them of my computer from the App Data folder ~n
-
-#showPoster(json_dict['Search'][0]['Poster'])
     
 showList(searchRequest)
 
-#First commit test 
