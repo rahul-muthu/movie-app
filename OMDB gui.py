@@ -6,6 +6,7 @@ class app:
         self.root = root
         root.geometry("900x600")
         root.title("OMBD")
+        self.root.resizable(False,False)
         self.searchPage()
 
     def searchPage(self):
@@ -40,23 +41,22 @@ class app:
         scrollcanvas = Canvas(outerframe)
         scrollbar = Scrollbar(outerframe, orient=VERTICAL, command=scrollcanvas.yview)
         innerframe= Frame(scrollcanvas)
-        toolbar= Frame(innerframe)
+
+        titlelabel = Label(innerframe, text="OMDB", font=("Nexa", "20", "bold"))
+        toolbar = Frame(innerframe)
         backbutton = Button(toolbar, text="⌂", command=lambda: self.searchPage())
         resultdisplay = Label(toolbar, text=f"Showing results for [{searchtype}] {searchval}")
 
-        titlelabel = Label(innerframe, text="OMDB", font=("Nexa", "20", "bold"))
-        ll = Button(innerframe, text="hhhhhhhhhhhhhhhhhhhhhhhh")
         #inbetweeners
         scrollcanvas.config(yscrollcommand=scrollbar.set)
         scrollcanvas.bind("<Configure>", lambda x: scrollcanvas.config(scrollregion=scrollcanvas.bbox("all")))
-        scrollcanvas.create_window((375, 0), window=innerframe, height=600, width=500)
-        innerframe.config(bg="RED")
-        scrollcanvas.config(bg="BLUE")
+        scrollcanvas.create_window((375, 0), window=innerframe, height=600, width=880)
 
         #baking
         outerframe.pack(fill=BOTH, expand=1)
         scrollcanvas.pack(side=LEFT, fill=BOTH, expand=1)
         scrollbar.pack(side=RIGHT, fill=Y, expand=0)
+
         titlelabel.pack()
         backbutton.pack(side=LEFT)
         resultdisplay.pack(side=LEFT)
