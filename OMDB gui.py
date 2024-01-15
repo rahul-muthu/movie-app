@@ -1,5 +1,8 @@
 from tkinter import *
 from tkinter import ttk
+import requests
+from request_api import returnMovies
+from PIL import Image, ImageTk
 
 class app:
     def __init__(self, root):
@@ -36,12 +39,14 @@ class app:
         for i in self.root.winfo_children():
             i.destroy()
         #making
+        movies = returnMovies(searchval, searchtype)
+        print(movies)
         #making the scrollbar
         outerframe = Frame(self.root)
         scrollcanvas = Canvas(outerframe)
         scrollbar = Scrollbar(outerframe, orient=VERTICAL, command=scrollcanvas.yview)
-        innerframe= Frame(scrollcanvas)
-
+        innerframe= Frame(scrollcanvas, bg="RED")
+        #top elements of the page
         titlelabel = Label(innerframe, text="OMDB", font=("Nexa", "20", "bold"))
         toolbar = Frame(innerframe)
         backbutton = Button(toolbar, text="⌂", command=lambda: self.searchPage())
@@ -50,7 +55,7 @@ class app:
         #inbetweeners
         scrollcanvas.config(yscrollcommand=scrollbar.set)
         scrollcanvas.bind("<Configure>", lambda x: scrollcanvas.config(scrollregion=scrollcanvas.bbox("all")))
-        scrollcanvas.create_window((375, 0), window=innerframe, height=600, width=880)
+        scrollcanvas.create_window((375, 0), window=innerframe, width=880)
 
         #baking
         outerframe.pack(fill=BOTH, expand=1)
@@ -61,6 +66,19 @@ class app:
         backbutton.pack(side=LEFT)
         resultdisplay.pack(side=LEFT)
         toolbar.pack(fill=X)
+
+        # making the frames of each movie
+        for i in movies:
+            movieframe = Frame(innerframe, bg="green")
+            originalphoto = Image.open(requests.get(i['Poster'], stream=True).raw)
+            originalphoto.resize((200, 400))
+            posterimage = ImageTk.PhotoImage(originalphoto)
+            posterlabel = Label(movieframe, image=posterimage, bg="blue")
+            posterlabel.image = posterimage
+            movieframe.pack(fill=X)
+            posterlabel.pack(side=LEFT)
+
+
 
 
 

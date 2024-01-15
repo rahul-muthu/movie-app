@@ -30,7 +30,7 @@ def movieList(Name):
     for j in allMovies(Name):
         print(j['Title'])
     
-def returnMovies(Name):
+def returnMovies(Name, Type):
     movies = []
 
     for i in allMovies(Name):
@@ -62,7 +62,6 @@ def showList(Name):
     for j in allShows(Name):
         print(j['Title'])
 
-print(returnMovies("Jack Reacher"))
 
 
 
