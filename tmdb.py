@@ -19,11 +19,18 @@ def allMovies(Name):
     return movies
     
 def Nathan(Name):
-    temp = allMovies(Name)
+    temp = jsonMovie(Name, None)
     newList = []
     if temp["total_results"] > 0:
-        for i in temp:
-            newList.append(dict([("name", i["original_title"]),("description",i["overview"]),("rating",i["popularity"]),("poster","https://image.tmdb.org/t/p/original" + i["poster_path"])]))
+        temp2 = allMovies(Name)
+        for i in temp2:
+            newList.append(dict([("name", i["original_title"]),
+                                 
+                                 ("description",i["overview"]),
+                                 
+                                 ("rating",i["popularity"]),
+                                 
+                                 ("poster","https://image.tmdb.org/t/p/original" + str(i["poster_path"]))]))
     
     return newList
 
@@ -57,7 +64,7 @@ def Nathans(Name):
 
                                  ("rating",i["popularity"]),
 
-                                 ("poster","https://image.tmdb.org/t/p/original" + i["poster_path"])]))
+                                 ("poster","https://image.tmdb.org/t/p/original" + str(i["poster_path"]))]))
     return newList
 
 
@@ -70,8 +77,6 @@ def jsonPerson(Name, Page):
     t = requests.get("https://api.themoviedb.org/3/search/person", params)
     return t.json()
 
-x = jsonPerson("brad pitt", None)["results"]
 
-for i in x:
-    for k, v in i.items():
-        print(k, v)
+
+print(Nathan("How to train your dragon"))
