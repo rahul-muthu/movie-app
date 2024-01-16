@@ -9,7 +9,7 @@ class app:
         self.root = root
         root.geometry("900x600")
         root.title("OMBD")
-        self.root.resizable(False,False)
+        self.root.resizable(False, False)
         self.searchPage()
 
     def searchPage(self):
@@ -66,18 +66,33 @@ class app:
         backbutton.pack(side=LEFT)
         resultdisplay.pack(side=LEFT)
         toolbar.pack(fill=X)
-
+        #exception handling of no poster available
+        NPoriginalphoto = Image.open(requests.get("https://movienewsletters.net/photos/000000h1.jpg", stream=True).raw).resize((200, 300))
+        NPposterimage = ImageTk.PhotoImage(NPoriginalphoto)
         # making the frames of each movie
         for i in movies:
-            movieframe = Frame(innerframe, bg="green")
-            originalphoto = Image.open(requests.get(i['Poster'], stream=True).raw)
-            originalphoto.resize((200, 400))
-            posterimage = ImageTk.PhotoImage(originalphoto)
-            posterlabel = Label(movieframe, image=posterimage, bg="blue")
-            posterlabel.image = posterimage
-            movieframe.pack(fill=X)
-            posterlabel.pack(side=LEFT)
+                movieframe = Frame(innerframe, bg="green")
+                #handling the posters
+                if i['Poster'] == "N/A":
+                    posterlabel = Label(movieframe, image=NPposterimage, bg="blue")
+                    posterlabel.image = NPposterimage
+                else:
+                    originalphoto = Image.open(requests.get(i['Poster'], stream=True).raw).resize((200, 300))
+                    posterimage = ImageTk.PhotoImage(originalphoto)
+                    posterlabel = Label(movieframe, image=posterimage, bg="blue")
+                    posterlabel.image = posterimage
+                #handling the title and rating box and description
+                titlebox = Frame(movieframe)
+                title = Label(titlebox, text=i['name'])
+                rating = Label(titlebox, text=f"Rating: {i['Rating']}")
+                description = Label(movieframe, text=i['Description'], wraplength=650, justify=LEFT, anchor=NW)
 
+                movieframe.pack(fill=X)
+                posterlabel.pack(side=LEFT)
+                title.pack(side=LEFT, fill=X)
+                rating.pack(side=RIGHT)
+                titlebox.pack(side=TOP, fill=X)
+                description.pack(side=LEFT, fill=BOTH, expand=1)
 
 
 
