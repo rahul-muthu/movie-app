@@ -2,7 +2,7 @@ import requests
 import json
 import math
 
-def omdbdata(searchquery, searchtype, Page):
+def tmdbdata(searchquery, searchtype, Page):
     if searchtype == "Movie":
         return movies(searchquery, Page)
     elif searchtype == "TV":

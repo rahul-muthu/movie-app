@@ -1,27 +1,35 @@
 from tkinter import *
 from tkinter import ttk
 import requests
-from tmdb import omdbdata
+from tmdb import tmdbdata
 from PIL import Image, ImageTk
 
 class app:
     def __init__(self, root):
         self.root = root
-        root.geometry("900x600")
         root.title("OMBD")
         self.root.resizable(False, False)
         self.searchPage()
+        #placing the app in the center of the screen
+        appheight = 600
+        appwidth = 900
+        screenheight = root.winfo_screenheight()
+        screenwidth = root.winfo_screenwidth()
+        X = (screenwidth-appwidth) / 2
+        Y = (screenheight-appheight) / 2
+        root.geometry(f"{appwidth}x{appheight}+{int(X)}+{int(Y)}")
 
     def searchPage(self):
         for i in self.root.winfo_children():
             i.destroy()
         #making
-        centerframe = Frame(self.root)
+        centerframe = Frame(self.root, bg="black")
         searchtype = StringVar()
         searchtype.set("Movie")
-        titlelabel = Label(centerframe, text="OMDB", font=("Nexa", "20", "bold"))
-        dropdownbox = OptionMenu(centerframe, searchtype, "Movie", "TV", "Celeb")
-        searchbar = Entry(centerframe, width=100)
+        titlelabel = Label(centerframe, text="TMDb", font=("Nexa", "50", "bold"), fg="orange", bg="black")
+        dropdownbox = OptionMenu(centerframe, searchtype, "Movie", "TV")
+        dropdownbox.config(borderwidth=0)
+        searchbar = Entry(centerframe, width=50, bg="white", font=("Helvetica", 15))
         #inbetweeners
         self.root.bind("<Return>", lambda x: self.searchCheck(searchbar.get(), searchtype.get()))
         dropdownbox.config(indicatoron=0)
@@ -39,22 +47,19 @@ class app:
         for i in self.root.winfo_children():
             i.destroy()
         #making
-        data, totalpages = omdbdata(searchval, searchtype, pagenum)
-        print(data)
-        print(totalpages)
+        data, totalpages = tmdbdata(searchval, searchtype, pagenum)
         #making the scrollbar
-        outerframe = Frame(self.root)
-        scrollcanvas = Canvas(outerframe)
+        outerframe = Frame(self.root, bg="black")
+        scrollcanvas = Canvas(outerframe, bg="black")
         scrollbar = Scrollbar(outerframe, orient=VERTICAL, command=scrollcanvas.yview)
-        innerframe= Frame(scrollcanvas, bg="RED")
+        innerframe= Frame(scrollcanvas, bg="black")
         #top elements of the page
-        titlelabel = Label(innerframe, text="OMDB", font=("Nexa", "20", "bold"))
-        toolbar = Frame(innerframe)
-        backbutton = Button(toolbar, text="⌂", command=lambda: self.searchPage())
-        resultdisplay = Label(toolbar, text=f"Showing results for [{searchtype}] {searchval}")
+        titlelabel = Label(innerframe, text="TMDb", font=("Nexa", "20", "bold"), bg="black", fg="orange")
+        toolbar = Frame(innerframe, bg="white", highlightbackground="black", pady=1, padx=1)
+        backbutton = Button(toolbar, text="⌂", command=lambda: self.searchPage(), bg="orange", fg="white", borderwidth=0, width=5)
+        resultdisplay = Label(toolbar, text=f"Showing results for [{searchtype}] {searchval}", bg="white", font=("Helvetica", 15, "bold"))
         #pages footer
         footerframe = Frame(innerframe)
-
         #inbetweeners
         scrollcanvas.config(yscrollcommand=scrollbar.set)
         scrollcanvas.bind("<Configure>", lambda x: scrollcanvas.config(scrollregion=scrollcanvas.bbox("all")))
@@ -66,7 +71,7 @@ class app:
         scrollbar.pack(side=RIGHT, fill=Y, expand=0)
 
         titlelabel.pack()
-        backbutton.pack(side=LEFT)
+        backbutton.pack(side=LEFT, fill=Y)
         resultdisplay.pack(side=LEFT)
         toolbar.pack(fill=X)
         #exception handling of no poster available
@@ -74,22 +79,21 @@ class app:
         NPposterimage = ImageTk.PhotoImage(NPoriginalphoto)
         # making the frames of each movie
         for i in data:
-                movieframe = Frame(innerframe, bg="green")
-                print(i['name'])
+                movieframe = Frame(innerframe)
                 #handling the posters
                 if i['poster'] == "https://image.tmdb.org/t/p/originalNone":
-                    posterlabel = Label(movieframe, image=NPposterimage, bg="blue")
+                    posterlabel = Label(movieframe, image=NPposterimage)
                     posterlabel.image = NPposterimage
                 else:
                     originalphoto = Image.open(requests.get(i['poster'], stream=True).raw).resize((200, 300))
                     posterimage = ImageTk.PhotoImage(originalphoto)
-                    posterlabel = Label(movieframe, image=posterimage, bg="blue")
+                    posterlabel = Label(movieframe, image=posterimage, bg="white")
                     posterlabel.image = posterimage
                 #handling the title and rating box and description
-                titlebox = Frame(movieframe)
-                title = Label(titlebox, text=i['name'])
-                rating = Label(titlebox, text=f"Popularity: {i['rating']}")
-                description = Label(movieframe, text=i['description'], wraplength=650, justify=LEFT, anchor=NW)
+                titlebox = Frame(movieframe, bg="white", pady=2)
+                title = Label(titlebox, text=i['name'], font=("Helvetica", 22), bg="white", wraplength=580, justify=LEFT)
+                rating = Label(titlebox, text=f"Popularity: {i['rating']}", bg="white", font=("Helvetica", 11, "bold"), fg="orange")
+                description = Label(movieframe, text=i['description'], wraplength=650, justify=LEFT, anchor=NW, bg="white", font=("Helvetica", 10))
 
                 movieframe.pack(fill=X)
                 posterlabel.pack(side=LEFT)
@@ -100,7 +104,14 @@ class app:
 
         #making the pages footer
         for i in range(1, totalpages+1):
-            pagebutton = Button(footerframe, text=str(i), command=lambda x=searchval, y=searchtype, z=i: self.resultsPage(x, y, z))
+            if i == pagenum:
+                pagebgcolour = "#ff4d01"
+            else: pagebgcolour = "orange"
+            pagebutton = Button(footerframe, text=str(i), command=lambda x=searchval, y=searchtype, z=i: self.resultsPage(x, y, z),
+                                borderwidth=1,
+                                bg=pagebgcolour,
+                                fg="white",
+                                width=3)
             pagebutton.pack(side=LEFT)
         footerframe.pack()
 
@@ -109,5 +120,6 @@ class app:
 
 
 root = Tk()
+root.config(bg="black")
 app(root)
 root.mainloop()
