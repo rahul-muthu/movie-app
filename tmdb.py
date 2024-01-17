@@ -17,21 +17,20 @@ def jsonMovie(Name, Page):
     return t.json()
 
 
-def allMovies(Name):
-    movies = []
-    json_dict = jsonMovie(Name, None)
-    if json_dict["total_results"] > 0:
-        for i in range(json_dict["total_pages"]):
-            movies += jsonMovie(Name, str(i + 1))['results']
-    return movies
+# def allMovies(Name, Page):
+#     movies = []
+#     json_dict = jsonMovie(Name, Page)
+#     if json_dict["total_results"] > 0:
+#         for i in range(json_dict["total_pages"]):
+#             movies += jsonMovie(Name, str(i + 1))['results']
+#     return movies
 
 
-def movies(Name):
-    temp = jsonMovie(Name, None)
+def movies(Name, Page):
+    temp = jsonMovie(Name, Page)
     newList = []
     if temp["total_results"] > 0:
-        temp2 = allMovies(Name)
-        for i in temp2:
+        for i in temp["results"]:
             newList.append(dict([("name", i["original_title"]),
 
                                  ("description", i["overview"]),
@@ -40,7 +39,7 @@ def movies(Name):
 
                                  ("poster", "https://image.tmdb.org/t/p/original" + str(i["poster_path"]))]))
 
-    return newList
+    return newList, temp["total_pages"]
 
 
 # Search Shows
@@ -51,21 +50,20 @@ def jsonShow(Name, Page):
     return t.json()
 
 
-def allShows(Name):
-    shows = []
-    json_dict = jsonShow(Name, None)
-    if json_dict["total_results"] > 0:
-        for i in range(json_dict["total_pages"]):
-            shows += jsonShow(Name, str(i + 1))['results']
-    return shows
+# def allShows(Name):
+#     shows = []
+#     json_dict = jsonShow(Name, None)
+#     if json_dict["total_results"] > 0:
+#         for i in range(json_dict["total_pages"]):
+#             shows += jsonShow(Name, str(i + 1))['results']
+#     return shows
 
 
-def tvshows(Name):
-    temp = jsonShow(Name, None)
+def tvshows(Name, Page):
+    temp = jsonShow(Name, Page)
     newList = []
     if temp["total_results"] > 0:
-        temp2 = allShows(Name)
-        for i in temp2:
+        for i in temp["results"]:
             print(i)
             newList.append(dict([("name", i["original_name"]),
 
@@ -74,7 +72,8 @@ def tvshows(Name):
                                  ("rating", i["popularity"]),
 
                                  ("poster", "https://image.tmdb.org/t/p/original" + str(i["poster_path"]))]))
-    return newList
+            
+    return newList, temp["total_pages"]
 
 
 # Search by person
