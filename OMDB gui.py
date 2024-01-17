@@ -33,14 +33,15 @@ class app:
 
     def searchCheck(self, searchval, searchtype):
         if searchval != "":
-            self.resultsPage(searchval, searchtype)
+            self.resultsPage(searchval, searchtype, 1)
 
-    def resultsPage(self, searchval, searchtype):
+    def resultsPage(self, searchval, searchtype, pagenum):
         for i in self.root.winfo_children():
             i.destroy()
         #making
-        data, totalpages = omdbdata(searchval, searchtype, 1)
+        data, totalpages = omdbdata(searchval, searchtype, pagenum)
         print(data)
+        print(totalpages)
         #making the scrollbar
         outerframe = Frame(self.root)
         scrollcanvas = Canvas(outerframe)
@@ -51,6 +52,8 @@ class app:
         toolbar = Frame(innerframe)
         backbutton = Button(toolbar, text="⌂", command=lambda: self.searchPage())
         resultdisplay = Label(toolbar, text=f"Showing results for [{searchtype}] {searchval}")
+        #pages footer
+        footerframe = Frame(innerframe)
 
         #inbetweeners
         scrollcanvas.config(yscrollcommand=scrollbar.set)
@@ -85,7 +88,7 @@ class app:
                 #handling the title and rating box and description
                 titlebox = Frame(movieframe)
                 title = Label(titlebox, text=i['name'])
-                rating = Label(titlebox, text=f"Rating: {i['rating']}")
+                rating = Label(titlebox, text=f"Popularity: {i['rating']}")
                 description = Label(movieframe, text=i['description'], wraplength=650, justify=LEFT, anchor=NW)
 
                 movieframe.pack(fill=X)
@@ -94,6 +97,12 @@ class app:
                 rating.pack(side=RIGHT)
                 titlebox.pack(side=TOP, fill=X)
                 description.pack(side=LEFT, fill=BOTH, expand=1)
+
+        #making the pages footer
+        for i in range(1, totalpages+1):
+            pagebutton = Button(footerframe, text=str(i), command=lambda x=searchval, y=searchtype, z=i: self.resultsPage(x, y, z))
+            pagebutton.pack(side=LEFT)
+        footerframe.pack()
 
 
 
