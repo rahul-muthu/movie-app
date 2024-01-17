@@ -39,8 +39,8 @@ class app:
         for i in self.root.winfo_children():
             i.destroy()
         #making
-        movies = omdbdata(searchval, searchtype)
-        print(movies)
+        data, totalpages = omdbdata(searchval, searchtype, 1)
+        print(data)
         #making the scrollbar
         outerframe = Frame(self.root)
         scrollcanvas = Canvas(outerframe)
@@ -70,7 +70,7 @@ class app:
         NPoriginalphoto = Image.open(requests.get("https://movienewsletters.net/photos/000000h1.jpg", stream=True).raw).resize((200, 300))
         NPposterimage = ImageTk.PhotoImage(NPoriginalphoto)
         # making the frames of each movie
-        for i in movies:
+        for i in data:
                 movieframe = Frame(innerframe, bg="green")
                 print(i['name'])
                 #handling the posters
