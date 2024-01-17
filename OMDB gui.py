@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 import requests
-from request_api import returnMovies
+from tmdb import omdbdata
 from PIL import Image, ImageTk
 
 class app:
@@ -39,7 +39,7 @@ class app:
         for i in self.root.winfo_children():
             i.destroy()
         #making
-        movies = returnMovies(searchval, searchtype)
+        movies = omdbdata(searchval, searchtype)
         print(movies)
         #making the scrollbar
         outerframe = Frame(self.root)
@@ -72,20 +72,21 @@ class app:
         # making the frames of each movie
         for i in movies:
                 movieframe = Frame(innerframe, bg="green")
+                print(i['name'])
                 #handling the posters
-                if i['Poster'] == "N/A":
+                if i['poster'] == "https://image.tmdb.org/t/p/originalNone":
                     posterlabel = Label(movieframe, image=NPposterimage, bg="blue")
                     posterlabel.image = NPposterimage
                 else:
-                    originalphoto = Image.open(requests.get(i['Poster'], stream=True).raw).resize((200, 300))
+                    originalphoto = Image.open(requests.get(i['poster'], stream=True).raw).resize((200, 300))
                     posterimage = ImageTk.PhotoImage(originalphoto)
                     posterlabel = Label(movieframe, image=posterimage, bg="blue")
                     posterlabel.image = posterimage
                 #handling the title and rating box and description
                 titlebox = Frame(movieframe)
                 title = Label(titlebox, text=i['name'])
-                rating = Label(titlebox, text=f"Rating: {i['Rating']}")
-                description = Label(movieframe, text=i['Description'], wraplength=650, justify=LEFT, anchor=NW)
+                rating = Label(titlebox, text=f"Rating: {i['rating']}")
+                description = Label(movieframe, text=i['description'], wraplength=650, justify=LEFT, anchor=NW)
 
                 movieframe.pack(fill=X)
                 posterlabel.pack(side=LEFT)

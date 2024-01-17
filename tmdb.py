@@ -2,8 +2,14 @@ import requests
 import json
 import math
 
+def omdbdata(searchquery, searchtype):
+    if searchtype == "Movie":
+        return movies(searchquery)
+    elif searchtype == "TV":
+        return tvshows(searchquery)
+    else:
+        return jsonPerson(searchquery, 1)
 
-# Search Movies
 
 def jsonMovie(Name, Page):
     params = {"api_key": "0d3ee9a2b929a754d750acc53410454b", "query": Name, "page": Page}
@@ -20,7 +26,7 @@ def allMovies(Name):
     return movies
 
 
-def Nathan(Name):
+def movies(Name):
     temp = jsonMovie(Name, None)
     newList = []
     if temp["total_results"] > 0:
@@ -54,7 +60,7 @@ def allShows(Name):
     return shows
 
 
-def Nathans(Name):
+def tvshows(Name):
     temp = jsonShow(Name, None)
     newList = []
     if temp["total_results"] > 0:
@@ -79,5 +85,3 @@ def jsonPerson(Name, Page):
     t = requests.get("https://api.themoviedb.org/3/search/person", params)
     return t.json()
 
-
-print(Nathan("How to train your dragon"))
